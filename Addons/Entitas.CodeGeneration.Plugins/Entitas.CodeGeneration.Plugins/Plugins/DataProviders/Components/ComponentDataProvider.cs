@@ -7,7 +7,7 @@ using Entitas.Utils;
 
 namespace Entitas.CodeGeneration.Plugins {
 
-    public class ComponentDataProvider : ICodeGeneratorDataProvider, IConfigurable {
+    public class ComponentDataProvider : ICodeGeneratorDataProvider, IConfigurable, ICodeGeneratorCachable {
 
         public string name { get { return "Component"; } }
         public int priority { get { return 0; } }
@@ -27,6 +27,8 @@ namespace Entitas.CodeGeneration.Plugins {
             }
         }
 
+        public Dictionary<string, object> objectCache { get; set; }
+
         readonly CodeGeneratorConfig _codeGeneratorConfig = new CodeGeneratorConfig();
         readonly AssembliesConfig _assembliesConfig = new AssembliesConfig();
         readonly ContextsComponentDataProvider _contextsComponentDataProvider = new ContextsComponentDataProvider();
@@ -37,15 +39,15 @@ namespace Entitas.CodeGeneration.Plugins {
                 new MemberDataComponentDataProvider(),
                 new ContextsComponentDataProvider(),
                 new IsUniqueComponentDataProvider(),
-                new CustomPrefixComponentDataProvider(),
+                new UniquePrefixComponentDataProvider(),
                 new ShouldGenerateComponentComponentDataProvider(),
                 new ShouldGenerateMethodsComponentDataProvider(),
                 new ShouldGenerateComponentIndexComponentDataProvider()
             };
         }
 
-        Type[] _types;
-        IComponentDataProvider[] _dataProviders;
+        readonly Type[] _types;
+        readonly IComponentDataProvider[] _dataProviders;
 
         public ComponentDataProvider() : this(null) {
         }
@@ -58,28 +60,26 @@ namespace Entitas.CodeGeneration.Plugins {
             _dataProviders = dataProviders;
         }
 
-        public void Configure(Properties properties) {
-            _codeGeneratorConfig.Configure(properties);
-            _assembliesConfig.Configure(properties);
+        public void Configure(Preferences preferences) {
+            _codeGeneratorConfig.Configure(preferences);
+            _assembliesConfig.Configure(preferences);
             foreach (var dataProvider in _dataProviders.OfType<IConfigurable>()) {
-                dataProvider.Configure(properties);
+                dataProvider.Configure(preferences);
             }
-            _contextsComponentDataProvider.Configure(properties);
+            _contextsComponentDataProvider.Configure(preferences);
         }
 
         public CodeGeneratorData[] GetData() {
-            if (_types == null) {
-                _types = PluginUtil
-                    .GetAssembliesResolver(_assembliesConfig.assemblies, _codeGeneratorConfig.searchPaths)
-                    .GetTypes();
-            }
+            var types = _types ?? PluginUtil
+                            .GetCachedAssemblyResolver(objectCache, _assembliesConfig.assemblies, _codeGeneratorConfig.searchPaths)
+                            .GetTypes();
 
-            var dataFromComponents = _types
+            var dataFromComponents = types
                 .Where(type => type.ImplementsInterface<IComponent>())
                 .Where(type => !type.IsAbstract)
                 .Select(type => createDataForComponent(type));
 
-            var dataFromNonComponents = _types
+            var dataFromNonComponents = types
                 .Where(type => !type.ImplementsInterface<IComponent>())
                 .Where(type => !type.IsGenericType)
                 .Where(type => hasContexts(type))

@@ -1,5 +1,4 @@
 using System.IO;
-using Entitas.Utils;
 using Fabl;
 
 namespace Entitas.CodeGeneration.CodeGenerator.CLI {
@@ -11,19 +10,18 @@ namespace Entitas.CodeGeneration.CodeGenerator.CLI {
         public override string example { get { return "entitas new [-f]"; } }
 
         public override void Run(string[] args) {
+            var preferences = loadPreferences();
             var currentDir = Directory.GetCurrentDirectory();
-            var path = currentDir + Path.DirectorySeparatorChar + Preferences.PATH;
+            var path = currentDir + Path.DirectorySeparatorChar + preferences.propertiesPath;
 
-            if (args.isForce() || !File.Exists(path)) {
-                var defaultConfig = new CodeGeneratorConfig();
-                var properties = new Properties(defaultConfig.defaultProperties);
-                defaultConfig.Configure(properties);
+            if (args.isForce() || !preferences.propertiesExist) {
+                preferences.AddProperties(new CodeGeneratorConfig().defaultProperties, true);
+                preferences.Save();
 
-                var propertiesString = defaultConfig.ToString();
-                File.WriteAllText(path, propertiesString);
-
-                fabl.Info("Created " + path);
-                fabl.Debug(propertiesString);
+                fabl.Info("Created " + preferences.propertiesPath);
+                fabl.Info("Created " + preferences.userPropertiesPath);
+                fabl.Info("👍");
+                fabl.Debug(preferences.ToString());
 
                 new EditConfig().Run(args);
             } else {

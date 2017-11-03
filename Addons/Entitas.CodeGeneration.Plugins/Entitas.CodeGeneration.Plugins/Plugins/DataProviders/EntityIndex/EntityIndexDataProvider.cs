@@ -8,7 +8,7 @@ using Entitas.Utils;
 
 namespace Entitas.CodeGeneration.Plugins {
 
-    public class EntityIndexDataProvider : ICodeGeneratorDataProvider, IConfigurable {
+    public class EntityIndexDataProvider : ICodeGeneratorDataProvider, IConfigurable, ICodeGeneratorCachable {
 
         public string name { get { return "Entity Index"; } }
         public int priority { get { return 0; } }
@@ -23,12 +23,14 @@ namespace Entitas.CodeGeneration.Plugins {
             }
         }
 
+        public Dictionary<string, object> objectCache { get; set; }
+
         readonly CodeGeneratorConfig _codeGeneratorConfig = new CodeGeneratorConfig();
         readonly AssembliesConfig _assembliesConfig = new AssembliesConfig();
         readonly IgnoreNamespacesConfig _ignoreNamespacesConfig = new IgnoreNamespacesConfig();
         readonly ContextsComponentDataProvider _contextsComponentDataProvider = new ContextsComponentDataProvider();
 
-        Type[] _types;
+        readonly Type[] _types;
 
         public EntityIndexDataProvider() : this(null) {
         }
@@ -37,21 +39,19 @@ namespace Entitas.CodeGeneration.Plugins {
             _types = types;
         }
 
-        public void Configure(Properties properties) {
-            _codeGeneratorConfig.Configure(properties);
-            _assembliesConfig.Configure(properties);
-            _ignoreNamespacesConfig.Configure(properties);
-            _contextsComponentDataProvider.Configure(properties);
+        public void Configure(Preferences preferences) {
+            _codeGeneratorConfig.Configure(preferences);
+            _assembliesConfig.Configure(preferences);
+            _ignoreNamespacesConfig.Configure(preferences);
+            _contextsComponentDataProvider.Configure(preferences);
         }
 
         public CodeGeneratorData[] GetData() {
-            if (_types == null) {
-                _types = PluginUtil
-                    .GetAssembliesResolver(_assembliesConfig.assemblies, _codeGeneratorConfig.searchPaths)
-                    .GetTypes();
-            }
+            var types = _types ?? PluginUtil
+                .GetCachedAssemblyResolver(objectCache, _assembliesConfig.assemblies, _codeGeneratorConfig.searchPaths)
+                .GetTypes();
 
-            var entityIndexData = _types
+            var entityIndexData = types
                 .Where(type => !type.IsAbstract)
                 .Where(type => type.ImplementsInterface<IComponent>())
                 .ToDictionary(
@@ -60,7 +60,7 @@ namespace Entitas.CodeGeneration.Plugins {
                 .Where(kv => kv.Value.Any(info => info.attributes.Any(attr => attr.attribute is AbstractEntityIndexAttribute)))
                 .Select(kv => createEntityIndexData(kv.Key, kv.Value));
 
-            var customEntityIndexData = _types
+            var customEntityIndexData = types
                 .Where(type => !type.IsAbstract)
                 .Where(type => Attribute.IsDefined(type, typeof(CustomEntityIndexAttribute)))
                 .Select(type => createCustomEntityIndexData(type));

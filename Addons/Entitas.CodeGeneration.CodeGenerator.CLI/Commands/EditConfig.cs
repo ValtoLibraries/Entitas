@@ -1,4 +1,3 @@
-using Entitas.Utils;
 using Fabl;
 
 namespace Entitas.CodeGeneration.CodeGenerator.CLI {
@@ -10,9 +9,10 @@ namespace Entitas.CodeGeneration.CodeGenerator.CLI {
         public override string example { get { return "entitas edit"; } }
 
         public override void Run(string[] args) {
-            if (assertProperties()) {
-                fabl.Debug("Opening " + Preferences.PATH);
-                System.Diagnostics.Process.Start(Preferences.PATH);
+            if (assertPreferences()) {
+                var preferences = loadPreferences();
+                fabl.Debug("Opening " + preferences.propertiesPath);
+                System.Diagnostics.Process.Start(preferences.propertiesPath);
             }
         }
     }

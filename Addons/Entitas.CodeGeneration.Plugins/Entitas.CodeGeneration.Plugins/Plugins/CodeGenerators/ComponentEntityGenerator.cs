@@ -68,8 +68,8 @@ ${memberAssignment}
 }
 ";
 
-        public void Configure(Properties properties) {
-            _ignoreNamespacesConfig.Configure(properties);
+        public void Configure(Preferences preferences) {
+            _ignoreNamespacesConfig.Configure(preferences);
         }
 
         public CodeGenFile[] Generate(CodeGeneratorData[] data) {
@@ -99,7 +99,7 @@ ${memberAssignment}
                 .Replace("${ComponentType}", data.GetFullTypeName())
                 .Replace("${ComponentName}", componentName)
                 .Replace("${componentName}", componentName.LowercaseFirst())
-                .Replace("${prefixedName}", data.GetCustomComponentPrefix().LowercaseFirst() + componentName)
+                .Replace("${prefixedName}", data.GetUniquePrefix().LowercaseFirst() + componentName)
                 .Replace("${Index}", index)
                 .Replace("${memberArgs}", getMemberArgs(memberData))
                 .Replace("${memberAssignment}", getMemberAssignment(memberData));

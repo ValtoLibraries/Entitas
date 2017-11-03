@@ -6,16 +6,16 @@ using NSpec;
 
 class describe_ComponentDataProvider : nspec {
 
-    ComponentData getData<T>(Properties properties = null) {
-        return getMultipleData<T>(properties)[0];
+    ComponentData getData<T>(Preferences preferences = null) {
+        return getMultipleData<T>(preferences)[0];
     }
 
-    ComponentData[] getMultipleData<T>(Properties properties = null) {
+    ComponentData[] getMultipleData<T>(Preferences preferences = null) {
         var provider = new ComponentDataProvider(new Type[] { typeof(T) });
-        if (properties == null) {
-            properties = new Properties("Entitas.CodeGeneration.Plugins.Contexts = Game, GameState");
+        if (preferences == null) {
+            preferences = new Preferences(new Properties("Entitas.CodeGeneration.Plugins.Contexts = Game, GameState"));
         }
-        provider.Configure(properties);
+        provider.Configure(preferences);
 
         return (ComponentData[])provider.GetData();
     }
@@ -88,11 +88,11 @@ class describe_ComponentDataProvider : nspec {
                 getData<DontGenerateMethodsComponent>().ShouldGenerateMethods().should_be_false();
             };
 
-            it["gets custom prefix"] = () => {
-                data.GetCustomComponentPrefix().GetType().should_be(typeof(string));
-                data.GetCustomComponentPrefix().should_be("is");
+            it["gets unique prefix"] = () => {
+                data.GetUniquePrefix().GetType().should_be(typeof(string));
+                data.GetUniquePrefix().should_be("is");
 
-                getData<CustomPrefixFlagComponent>().GetCustomComponentPrefix().should_be("My");
+                getData<CustomPrefixFlagComponent>().GetUniquePrefix().should_be("My");
             };
         };
 
@@ -146,8 +146,8 @@ class describe_ComponentDataProvider : nspec {
                 data.ShouldGenerateMethods().should_be_true();
             };
 
-            it["gets custom prefix"] = () => {
-                data.GetCustomComponentPrefix().should_be("is");
+            it["gets unique prefix"] = () => {
+                data.GetUniquePrefix().should_be("is");
             };
         };
 
@@ -156,9 +156,9 @@ class describe_ComponentDataProvider : nspec {
             it["creates data for each type"] = () => {
                 var types = new [] { typeof(NameAgeComponent), typeof(Test2ContextComponent) };
                 var provider = new ComponentDataProvider(types);
-                provider.Configure(new Properties(
+                provider.Configure(new Preferences(new Properties(
                     "Entitas.CodeGeneration.Plugins.Contexts = Game, GameState"
-                ));
+                )));
                 var data = provider.GetData();
                 data.Length.should_be(types.Length);
             };
@@ -192,12 +192,12 @@ class describe_ComponentDataProvider : nspec {
             ComponentData data = null;
 
             before = () => {
-                var properties = new Properties(
+                var preferences = new Preferences(new Properties(
                     "Entitas.CodeGeneration.Plugins.Contexts = ConfiguredContext" + "\n"
-                );
+                ));
 
                 type = typeof(NoContextComponent);
-                data = getData<NoContextComponent>(properties);
+                data = getData<NoContextComponent>(preferences);
             };
 
             it["gets default context"] = () => {

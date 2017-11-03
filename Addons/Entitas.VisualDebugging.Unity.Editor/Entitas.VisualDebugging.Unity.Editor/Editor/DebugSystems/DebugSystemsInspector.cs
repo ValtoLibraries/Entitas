@@ -46,8 +46,9 @@ namespace Entitas.VisualDebugging.Unity.Editor {
         GUIContent _pauseButtonContent;
 
         void OnEnable() {
+            var preferences = Preferences.sharedInstance;
             var config = new VisualDebuggingConfig();
-            config.Configure(Preferences.LoadProperties());
+            config.Configure(preferences);
             _systemWarningThreshold = config.systemWarningThreshold;
         }
 

@@ -42,8 +42,8 @@ namespace Entitas.CodeGeneration.Plugins {
         const string MEMBER_ARGS_TEMPLATE =
 @"${MemberType} new${MemberName}";
 
-        public void Configure(Properties properties) {
-            _ignoreNamespacesConfig.Configure(properties);
+        public void Configure(Preferences preferences) {
+            _ignoreNamespacesConfig.Configure(preferences);
         }
 
         public CodeGenFile[] Generate(CodeGeneratorData[] data) {
@@ -72,13 +72,13 @@ namespace Entitas.CodeGeneration.Plugins {
             var template = memberData.Length == 0
                                      ? FLAG_INTERFACE_TEMPLATE
                                      : STANDARD_INTERFACE_TEMPLATE;
-            
+
             var fileContent = template
                 .Replace("${InterfaceName}", interfaceName)
                 .Replace("${ComponentType}", data.GetFullTypeName())
                 .Replace("${ComponentName}", componentName)
                 .Replace("${componentName}", componentName.LowercaseFirst())
-                .Replace("${prefixedName}", data.GetCustomComponentPrefix().LowercaseFirst() + componentName)
+                .Replace("${prefixedName}", data.GetUniquePrefix().LowercaseFirst() + componentName)
                 .Replace("${memberArgs}", getMemberArgs(memberData));
 
             return new CodeGenFile(

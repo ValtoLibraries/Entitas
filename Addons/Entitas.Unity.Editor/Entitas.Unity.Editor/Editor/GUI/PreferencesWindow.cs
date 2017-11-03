@@ -14,7 +14,7 @@ namespace Entitas.Unity.Editor {
         }
 
         Texture2D _headerTexture;
-        Properties _properties;
+        Preferences _preferences;
         IEntitasPreferencesDrawer[] _preferencesDrawers;
         Vector2 _scrollViewPosition;
 
@@ -28,15 +28,14 @@ namespace Entitas.Unity.Editor {
                                            .ToArray();
 
             try {
-                _properties = Preferences.HasProperties()
-                                         ? Preferences.LoadProperties()
-                                         : new Properties();
+                _preferences = Preferences.sharedInstance;
+                _preferences.Refresh();
 
                 foreach (var drawer in _preferencesDrawers) {
-                    drawer.Initialize(_properties);
+                    drawer.Initialize(_preferences);
                 }
 
-                Preferences.SaveProperties(_properties);
+                _preferences.Save();
             } catch(Exception ex) {
                 _configException = ex;
             }
@@ -52,7 +51,7 @@ namespace Entitas.Unity.Editor {
             EditorGUILayout.EndScrollView();
 
             if (GUI.changed) {
-                Preferences.SaveProperties(_properties);
+                _preferences.Save();
             }
         }
 
@@ -71,9 +70,9 @@ namespace Entitas.Unity.Editor {
                 if (GUILayout.Button("Wiki", EditorStyles.toolbarButton)) {
                     EntitasFeedback.EntitasWiki();
                 }
-                //if (GUILayout.Button("Donate", EditorStyles.toolbarButton)) {
-                //    EntitasFeedback.Donate();
-                //}
+                if (GUILayout.Button("Donate", EditorStyles.toolbarButton)) {
+                    EntitasFeedback.Donate();
+                }
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -89,7 +88,7 @@ namespace Entitas.Unity.Editor {
             if (_configException == null) {
                 for (int i = 0; i < _preferencesDrawers.Length; i++) {
                     try {
-                        _preferencesDrawers[i].Draw(_properties);
+                        _preferencesDrawers[i].Draw(_preferences);
                     } catch(Exception ex) {
                         drawException(ex);
                     }

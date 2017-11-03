@@ -9,14 +9,12 @@ namespace Entitas.CodeGeneration.CodeGenerator.CLI {
         public override string example { get { return "entitas dry"; } }
 
         public override void Run(string[] args) {
-            if (assertProperties()) {
-                var codeGenerator = CodeGeneratorUtil.CodeGeneratorFromProperties();
-
+            if (assertPreferences()) {
+                var codeGenerator = CodeGeneratorUtil.CodeGeneratorFromPreferences();
                 codeGenerator.OnProgress += (title, info, progress) => {
                     var p = (int)(progress * 100);
                     fabl.Debug(string.Format("{0}: {1} ({2}%)", title, info, p));
                 };
-
                 codeGenerator.DryRun();
             }
         }

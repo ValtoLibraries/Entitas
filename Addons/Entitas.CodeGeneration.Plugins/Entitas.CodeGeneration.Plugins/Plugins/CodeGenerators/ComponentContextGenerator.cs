@@ -75,8 +75,8 @@ namespace Entitas.CodeGeneration.Plugins {
 }
 ";
 
-        public void Configure(Properties properties) {
-            _ignoreNamespacesConfig.Configure(properties);
+        public void Configure(Preferences preferences) {
+            _ignoreNamespacesConfig.Configure(preferences);
         }
 
         public CodeGenFile[] Generate(CodeGeneratorData[] data) {
@@ -106,7 +106,7 @@ namespace Entitas.CodeGeneration.Plugins {
                 .Replace("${ComponentType}", data.GetFullTypeName())
                 .Replace("${ComponentName}", componentName)
                 .Replace("${componentName}", componentName.LowercaseFirst())
-                .Replace("${prefixedComponentName}", data.GetCustomComponentPrefix().LowercaseFirst() + componentName)
+                .Replace("${prefixedComponentName}", data.GetUniquePrefix().LowercaseFirst() + componentName)
                 .Replace("${memberArgs}", getMemberArgs(memberData))
                 .Replace("${methodArgs}", getMethodArgs(memberData));
 

@@ -1,3 +1,250 @@
+# 0.46.3
+
+As always, the Unity Asset Store version might take a few days to be processed and accepted by Unity.
+Please check for updates in 2 - 4 days.
+
+#### Code Generation
+- Added `IPreProcessor`
+- Added TargetFrameworkProfilePreProcessor
+- Fixed problems with Roslyn Generator and Visual Studio on Windows #503
+
+
+# 0.46.2
+
+As always, the Unity Asset Store version might take a few days to be processed and accepted by Unity.
+Please check for updates in 2 - 4 days.
+
+#### Code Generation
+- Added `IDoctor` for custom diagnosis and custom symptoms treatment :) Will help improving the 
+  code generator setup experience that is aimimg for a one-click setup
+- Implemented IDoctor for ComponentDataProvider, EntityIndexDataProvider and DebugLogPostProcessor
+- Removed `isEnabledByDefault`from all plugins
+
+#### TCPezy
+- ResolveHost returns IPv4 address to fix issue with server / client mode on windows
+
+
+# 0.46.1
+
+As always, the Unity Asset Store version might take a few days to be processed and accepted by Unity.
+Please check for updates in 2 - 4 days.
+
+#### Entitas.VisualDebugging.CodeGeneration.Plugins
+-  Added deep device profiling support to generated Feature class #497
+
+#### Unity
+- Added buttons to generate DefaultInstanceDrawer and TypeDrawer
+- Added deep device profiling toggle to Entitas Preferences
+
+<img width="415" alt="Entitas - Deep Device Profiling" src="https://user-images.githubusercontent.com/233700/33909162-f4e1a684-df8a-11e7-89d9-1e910554b954.png">
+
+
+# 0.46.0
+
+As always, the Unity Asset Store version might take a few days to be processed and accepted by Unity.
+Please check for updates in 2 - 4 days.
+
+This release is a maintenance release as announced here:
+
+https://github.com/sschmid/Entitas-CSharp/issues/508
+
+As the project got more mature the Entitas repository not only contained the ECS core but also a few other
+modules like Logging, Serialization, Networking, Code Generator, Common Utils and more.
+The goal of this refactoring was to extract reusable modules and increase the focus of the Entitas repository
+on ECS. Reusable modules have been successfully extracted to their own standalone projects. Overall, with the
+increased focus that is achieved by having standalone projects I expect the quality to raise, too. This is
+generally the case when you have reusable code that is battle tested in multiple different scenarios.
+
+As mentioned in #508 those projects all have the `DesperateDevs` namespace. You maybe already know about
+Desperate Devs because of the new YouTube channel where I will upload more and more Video on ECS,
+best practices and Software Architecture. Subscribe if you don't want to miss future videos.
+
+https://www.youtube.com/channel/UC2q7q7tcrwWHu5GSGyt_JEQ
+
+As a result of this refactoring I was able to remove a lot of noise from the Entitas repository and I could
+easily fix platform depended bugs without any distraction.
+
+<img width="385" alt="entitas-desperatedevs" src="https://user-images.githubusercontent.com/233700/33746219-2011570a-dbbc-11e7-9631-4e8730fa7847.png">
+
+Entitas will benefit from having the Desperate Devs dependencies as it enforces modularity and reusability.
+Additionally, it will be possible to use awesome tools like TCPezy (DesperateDev.Networking) and Jenny (DesperateDevs.CodeGeneration) independently.
+
+
+#### Breaking changes
+Please follow the [Entitas upgrade guide](https://github.com/sschmid/Entitas-CSharp/blob/master/EntitasUpgradeGuide.md)
+
+#### Obsolete notice
+- Removed methods marked obsolete in 0.42.0 from April 2017
+- Blueprints are now completely removed from the zip files (sources still available)
+
+#### Preferences
+- Showing properties name in Edit Button
+
+#### Jenny (aka Code Generator)
+- CodeGeneratorPreferencesDrawer will keep unavailable plugins #496
+- Added Display Dialog for auto import
+- Added a secret and hidden cli command, can you find it? ❤️
+
+#### TCPezy (aka entitas server)
+- Fixed Unhandled Exception (appeared on Windows only) #489
+
+#### Other
+- Changed language level of all projects to C# 4.0
+- Deleted CodeGenerator Unity Test project
+
+
+# 0.45.1
+
+As always, the Unity Asset Store version might take a few days to be processed and accepted by Unity.
+Please check for updates in 2 - 4 days.
+
+#### CodeGenerator
+- Added Auto Import Button to Entitas Preferences. This will detect plugins and automatically set them in Entitas.properties
+
+
+# 0.45.0
+
+Thanks for the feedback on the new code generator so far. This update contains a lot of great improvments.
+As always, the Unity Asset Store version might take a few days to be processed and accepted by Unity.
+Please check for updates in 2 - 4 days.
+
+
+#### Breaking changes
+Please follow the [Entitas upgrade guide](https://github.com/sschmid/Entitas-CSharp/blob/master/EntitasUpgradeGuide.md)
+
+
+#### Entitas
+- Fixed flag components increasing the componentPool stack #445
+- Logging all retained entities in ContextStillHasRetainedEntitiesException #448
+- Added support for multiple indexed members per component #464
+
+```
+public sealed class MyComponent : IComponent {
+
+  // Multiple fields are now supported
+
+  [EntityIndex]
+  public int value;
+
+  [EntityIndex]
+  public int otherValue;
+}
+
+// will generate
+context.GetEntitiesWithMyValue(...);
+context.GetEntitiesWithMyOtherValue(...);
+```
+
+
+#### CodeGenerator
+- Displaying more prominent popup in Unity when trying to generate with compile errors #463
+
+![entitas-codegenerator-compileerrorpopup](https://user-images.githubusercontent.com/233700/32519395-e8dccbdc-c40c-11e7-8a6c-08f176b23244.png)
+
+- AssemblyResolver won't append dll to exe extension
+- Changed code generator keys and removed default values
+- Changed code generator cli keys and removed default values
+- Added auto-import command. Use `entitas auto-import` to automatically populate Entitas.properties
+- `entitas status` command will detect potential collisions, e.g. duplicate providers from the default plugins and the roslyn plugins
+- `entitas fix` can resolve plugin collisions
+- `entitas fix` command will tell you to press any key
+- Removed `-a` keepAlive in favour of `entitas server` and `entitas client`
+- Fixed client only sending first command to server #482
+- Default Plugins are now in folder called Entitas
+- Refactored all commands and simplified many utils methods
+- `Entitas.exe` now with capital E
+
+
+#### Roslyn
+- Added custom support for multi-dimensional arrays types like `int[,,]` #481
+Let me know if more types need custom support.
+
+#### Migration
+- Added migration for 0.45.0
+
+
+# 0.44.0
+
+As always, the Unity Asset Store version might take a few days to be processed and accepted by Unity.
+Please check for updates in 2 - 4 days.
+
+#### Unity CodeGenerator
+- Added new menu item which connects to an external code generator server instance
+
+#### CodeGenerator CLI
+- Added server command
+- Added client command
+- Added startCodeGenerator files for macOS and Windows
+
+#### Example
+Start the code generator server by double clicking `startCodeGenerator` on macOS or `startCodeGenerator.bat` on Windows, or use the terminal
+
+```
+$ mono CodeGenerator/entitas.exe server
+```
+
+You can now either use the new Unity menu item `Tools/Entitas/Generate with external Code Generator`
+which connects to a running server and sends the `gen` command or connect yourself like this
+
+```
+$ mono CodeGenerator/entitas.exe client gen
+```
+
+This will connect to a running server and send the `gen` command. This is useful if you want to add your own custom commands
+in your IDE like Visual Studio or Rider (or others).
+
+Using the code generator server and client is optional but can greatly improve your workflow and
+can drastically reduce the overhead of generating new files.
+
+
+# 0.43.0
+
+As always, the Unity Asset Store version might take a few days to be processed and accepted by Unity.
+Please check for updates in 2 - 4 days.
+
+#### Breaking changes
+The new code generator is part of `Entitas.Roslyn`. The Roslyn Plugins are now called `Entitas.Roslyn.CodeGeneration.Plugins`. If you already tested the new code generator beta, please update Entitas.properties
+- `Entitas.Roslyn.CodeGeneration.Plugins`
+- `Entitas.Roslyn.CodeGeneration.Plugins.ComponentDataProvider`
+- `Entitas.Roslyn.CodeGeneration.Plugins.EntityIndexDataProvider`
+
+New mandatory keys have been added to Entitas.properties. You can automatically add them by running `entitas fix`
+
+#### CodeGenerator
+- Added `ICodeGeneratorCachable` to cache and share objects between multiple plugins to avoid redundant calculations
+- Using the objectCache to share the AssemblyResolver between all plugins
+- Added CodeGenerator to default searchPaths
+- Added Unity menu item to generate with CLI
+
+<img width="242" alt="entitas-unity-cli" src="https://user-images.githubusercontent.com/233700/32442888-4c457022-c2fd-11e7-8665-bc9b7619e3f9.png">
+
+#### CodeGenerator CLI
+- Updated New command to use preferences
+- Added CLIConfig with new key `Entitas.CodeGeneration.CodeGenerator.CLI.Ignore.UnusedKeys` to add keys that should be ignored when running `entitas status` or `entitas doctor`. You can automatically ignore keys by pressing `i`
+
+<img width="906" alt="entitas-cli-ignoreunusedkeys" src="https://user-images.githubusercontent.com/233700/32444739-f3d660c0-c303-11e7-96ce-a111c9de2d89.png">
+
+- Added support for custom properties files. Each command optionally accepts a path to a properties file. This way you can have multiple different configs how to run the code generator, e.g. one with the reflection-based code generator and one with the roslyn code generator.
+
+```csharp
+entitas gen My.properties
+```
+- Pretty CLI
+
+#### Unity
+- Added Edit Button to Entitas Preferences
+
+<img width="449" alt="entitas-preferences-editbutton" src="https://user-images.githubusercontent.com/233700/32421256-c8e4fa88-c296-11e7-8c14-8d075444ed51.png">
+
+#### Asset Store Version
+- Changed project structure. The Plugins are now called `Entitas.Roslyn.CodeGeneration.Plugins`
+- Using the objectCache to share the ProjectParser between all plugins which speeds up the code generation process
+- Updated all packages to latest version and downgraded all projects from .NET 4.6.1 to .NET 4.6
+- Added more dependencies to remove warnings when running `entitas doctor` or `entitas gen`
+
+<img width="640" alt="entitas-roslyn-nowarnings" src="https://user-images.githubusercontent.com/233700/32421230-8766467a-c296-11e7-898a-0eaaa98c4e5a.png">
+
+
 # 0.42.5
 
 #### General
@@ -15,12 +262,14 @@ $ entitas gen -a
 # 0.42.4
 
 #### Notes
-Entitas development is back on track again and the wait is over. This is probably one of the last updates before Entitas reaches 1.0.0. This verion has been tested successfully in combination with the new code generator that will work even when the code is not compiling.
+Entitas development is back on track again and the wait is over. This is probably one of the last updates before Entitas reaches 1.0.0.
+This verion has been tested successfully in combination with the new code generator that will work even when the code is not compiling.
 
 #### General
 - Added support for User.properties. You can now either overwrite values sepcified in Entitas.properties or use placeholders
 
-Create a new file called User.properties and specify the keys and values that should be overwritten. You can also specify placeholers like this `${myPlaceholder}` and specify the key either in Entitas.properties or User.properties.
+Create a new file called User.properties and specify the keys and values that should be overwritten.
+You can also specify placeholers like this `${myPlaceholder}` and specify the key either in Entitas.properties or User.properties.
 see: [Match One - Entitas.properties](https://github.com/sschmid/Match-One/blob/master/Entitas.properties)
 see: [Match One - User.properties](https://github.com/sschmid/Match-One/blob/master/User.properties)
 
@@ -116,7 +365,10 @@ Please follow the [Entitas upgrade guide](https://github.com/sschmid/Entitas-CSh
 
 # 0.41.2
 
-After installing please check your Entitas.properties. Due to the addition of `IConfigurable` for code generator plugins some keys in Entitas.properties changed. `entitas.exe doctor`, `entitas.exe status` and `entitas.exe fix` can help you fixing any issues. A new default Entitas.properties file will be created if none is found. The default Entitas.properties should work with Unity without modification. For reference take a look at [Match-One - Entitas.properties](https://github.com/sschmid/Match-One/blob/master/Entitas.properties)
+After installing please check your Entitas.properties. Due to the addition of `IConfigurable` for code generator plugins
+some keys in Entitas.properties changed. `entitas.exe doctor`, `entitas.exe status` and `entitas.exe fix` can help you
+fixing any issues. A new default Entitas.properties file will be created if none is found. The default Entitas.properties
+should work with Unity without modification. For reference take a look at [Match-One - Entitas.properties](https://github.com/sschmid/Match-One/blob/master/Entitas.properties)
 
 Exiting limitation mentioned in the [Entitas upgrade guide](https://github.com/sschmid/Entitas-CSharp/blob/master/EntitasUpgradeGuide.md) still apply (Entitas.Blueprints.CodeGeneration.Plugins is not supported in the code generator CLI)
 
@@ -180,7 +432,8 @@ Missing key: Entitas.CodeGeneration.Plugins.IgnoreNamespaces
 
 See and discuss changes in [Milestone 0.41.0](https://github.com/sschmid/Entitas-CSharp/milestone/13)
 
-This milestone paves the way for a more customizable version of Entitas. A streamlined and modular project structure enables deploying Entitas as Dlls which opens the door for 3rd party Addons and the extendable command line code generator.
+This milestone paves the way for a more customizable version of Entitas. A streamlined and modular project structure enables
+deploying Entitas as Dlls which opens the door for 3rd party Addons and the extendable command line code generator.
 
 #### Breaking changes
 Please follow the [Entitas upgrade guide](https://github.com/sschmid/Entitas-CSharp/blob/master/EntitasUpgradeGuide.md)
@@ -223,7 +476,9 @@ Please follow the [Entitas upgrade guide](https://github.com/sschmid/Entitas-CSh
 See and discuss changes in [Milestone 0.40.0](https://github.com/sschmid/Entitas-CSharp/milestone/12)
 
 #### Note
-Please update Entitas.properties by opening Entitas Preferences. Added `assemblyPath` and `codeGeneratorAssemblyPath` to code generator config. When not selected already, navigate to `Library/ScriptAssemblies/` in your Unity project and select `Assembly-CSharp.dll` for the assembly and `Assembly-CSharp-Editor.dll` for the code generator assembly.
+Please update Entitas.properties by opening Entitas Preferences. Added `assemblyPath` and `codeGeneratorAssemblyPath`
+to code generator config. When not selected already, navigate to `Library/ScriptAssemblies/` in your Unity project
+and select `Assembly-CSharp.dll` for the assembly and `Assembly-CSharp-Editor.dll` for the code generator assembly.
 
 #### Entitas.CodeGenerator
 - Add ConsoleWriteLinePostProcessor #342

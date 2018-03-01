@@ -24,6 +24,7 @@ namespace Entitas.CodeGeneration.Plugins {
 
                 return _assembliesConfig.defaultProperties
                     .Merge(_contextsComponentDataProvider.defaultProperties)
+                    .Merge(_ignoreNamespacesConfig.defaultProperties)
                     .Merge(dataProviderProperties);
             }
         }
@@ -33,6 +34,7 @@ namespace Entitas.CodeGeneration.Plugins {
         readonly CodeGeneratorConfig _codeGeneratorConfig = new CodeGeneratorConfig();
         readonly AssembliesConfig _assembliesConfig = new AssembliesConfig();
         readonly ContextsComponentDataProvider _contextsComponentDataProvider = new ContextsComponentDataProvider();
+        readonly IgnoreNamespacesConfig _ignoreNamespacesConfig = new IgnoreNamespacesConfig();
 
         static IComponentDataProvider[] getComponentDataProviders() {
             return new IComponentDataProvider[] {
@@ -43,7 +45,8 @@ namespace Entitas.CodeGeneration.Plugins {
                 new UniquePrefixComponentDataProvider(),
                 new ShouldGenerateComponentComponentDataProvider(),
                 new ShouldGenerateMethodsComponentDataProvider(),
-                new ShouldGenerateComponentIndexComponentDataProvider()
+                new ShouldGenerateComponentIndexComponentDataProvider(),
+                new EventComponentDataProvider()
             };
         }
 
@@ -67,7 +70,9 @@ namespace Entitas.CodeGeneration.Plugins {
             foreach (var dataProvider in _dataProviders.OfType<IConfigurable>()) {
                 dataProvider.Configure(preferences);
             }
+
             _contextsComponentDataProvider.Configure(preferences);
+            _ignoreNamespacesConfig.Configure(preferences);
         }
 
         public CodeGeneratorData[] GetData() {
@@ -78,19 +83,29 @@ namespace Entitas.CodeGeneration.Plugins {
             var dataFromComponents = types
                 .Where(type => type.ImplementsInterface<IComponent>())
                 .Where(type => !type.IsAbstract)
-                .Select(createDataForComponent);
+                .Select(createDataForComponent)
+                .ToArray();
 
             var dataFromNonComponents = types
                 .Where(type => !type.ImplementsInterface<IComponent>())
                 .Where(type => !type.IsGenericType)
-                .Where(type => hasContexts(type))
+                .Where(hasContexts)
                 .SelectMany(createDataForNonComponent)
                 .ToArray();
 
-            var generatedComponentsLookup = dataFromNonComponents.ToLookup(data => data.GetTypeName());
-            return dataFromComponents
-                .Where(data => !generatedComponentsLookup.Contains(data.GetTypeName()))
-                .Concat(dataFromNonComponents)
+            var dataFromEvents = dataFromComponents
+                .Where(data => data.IsEvent())
+                .SelectMany(createDataForEvents)
+                .ToArray();
+
+            return merge(dataFromEvents, merge(dataFromNonComponents, dataFromComponents));
+        }
+
+        ComponentData[] merge(ComponentData[] prioData, ComponentData[] redundantData) {
+            var lookup = prioData.ToLookup(data => data.GetTypeName());
+            return redundantData
+                .Where(data => !lookup.Contains(data.GetTypeName()))
+                .Concat(prioData)
                 .ToArray();
         }
 
@@ -114,6 +129,27 @@ namespace Entitas.CodeGeneration.Plugins {
 
                     return data;
                 }).ToArray();
+        }
+
+        ComponentData[] createDataForEvents(ComponentData data) {
+            var componentName = data.GetTypeName().ToComponentName(_ignoreNamespacesConfig.ignoreNamespaces);
+            return data.GetContextNames()
+                .SelectMany(contextName =>
+                    data.GetEventData().Select(eventData => {
+                        var dataForEvent = new ComponentData(data);
+                        dataForEvent.IsEvent(false);
+                        dataForEvent.IsUnique(false);
+                        var eventTypeSuffix = eventData.GetEventTypeSuffix();
+                        var optionalContextName = dataForEvent.GetContextNames().Length > 1 ? contextName : string.Empty;
+                        var listenerComponentName = optionalContextName + componentName + eventTypeSuffix + "Listener";
+                        dataForEvent.SetlTypeName(listenerComponentName.AddComponentSuffix());
+                        dataForEvent.SetMemberData(new[] {
+                            new MemberData("System.Collections.Generic.List<I" + listenerComponentName + ">", "value")
+                        });
+                        dataForEvent.SetContextNames(new[] { contextName });
+                        return dataForEvent;
+                    }).ToArray()
+                ).ToArray();
         }
 
         bool hasContexts(Type type) {

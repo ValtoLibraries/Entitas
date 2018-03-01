@@ -30,11 +30,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DesperateDevs.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Libraries\DesperateDevs.Utils.dll</HintPath>
+      <HintPath>..\Libraries\Dependencies\DesperateDevs.Utils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entitas\Extensions\EntityStringExtension.cs" />
+    <Compile Include="Entitas\Extensions\MatcherStringExtension.cs" />
     <Compile Include="Entitas\Matcher\Matcher.cs" />
     <Compile Include="Entitas\Matcher\MatcherToString.cs" />
     <Compile Include="Entitas\Matcher\MatcherEquals.cs" />
@@ -119,8 +121,8 @@
     <Folder Include="Entitas\Matcher\Interfaces\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Entitas\version">
-      <LogicalName>version</LogicalName>
+    <EmbeddedResource Include="Entitas\version.txt">
+      <LogicalName>version.txt</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

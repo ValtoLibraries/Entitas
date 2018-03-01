@@ -16,14 +16,15 @@
 │   ├── Entitas.CodeGeneration.Plugins
 │   │   └── Entitas.CodeGeneration.Plugins
 │   │       ├── CodeGenerators
+│   │       │   ├── Component
+│   │       │   └── Events
 │   │       ├── Configs
 │   │       ├── Data
-│   │       ├── DataProviders
-│   │       │   ├── Components
-│   │       │   │   └── Providers
-│   │       │   ├── Contexts
-│   │       │   └── EntityIndex
-│   │       └── Templates
+│   │       └── DataProviders
+│   │           ├── Components
+│   │           │   └── Providers
+│   │           ├── Contexts
+│   │           └── EntityIndex
 │   ├── Entitas.Migration
 │   │   └── Entitas.Migration
 │   │       ├── Migration
@@ -67,11 +68,8 @@
 │       │   └── Interfaces
 │       └── Systems
 │           └── Interfaces
-├── Scripts
-│   └── docs_resources
-└── Snippets
-    ├── VisualStudio
-    └── Xamarin
+└── Scripts
+    └── docs_resources
 .
 ├── Addons
 │   ├── Entitas.Blueprints
@@ -110,18 +108,28 @@
 │   │       ├── CustomComponentNameAttribute.cs
 │   │       ├── CustomEntityIndexAttribute.cs
 │   │       ├── DontGenerateAttribute.cs
+│   │       ├── EventAttribute.cs
 │   │       ├── PostConstructorAttribute.cs
 │   │       ├── UniqueAttribute.cs
 │   │       └── UniquePrefixAttribute.cs
 │   ├── Entitas.CodeGeneration.Plugins
 │   │   └── Entitas.CodeGeneration.Plugins
 │   │       ├── CodeGenerators
-│   │       │   ├── ComponentContextGenerator.cs
-│   │       │   ├── ComponentEntityGenerator.cs
-│   │       │   ├── ComponentEntityInterfaceGenerator.cs
-│   │       │   ├── ComponentGenerator.cs
-│   │       │   ├── ComponentMatcherGenerator.cs
-│   │       │   ├── ComponentsLookupGenerator.cs
+│   │       │   ├── Component
+│   │       │   │   ├── ComponentContextApiGenerator.cs
+│   │       │   │   ├── ComponentEntityApiGenerator.cs
+│   │       │   │   ├── ComponentEntityApiInterfaceGenerator.cs
+│   │       │   │   ├── ComponentGenerator.cs
+│   │       │   │   ├── ComponentLookupGenerator.cs
+│   │       │   │   └── ComponentMatcherApiGenerator.cs
+│   │       │   ├── Events
+│   │       │   │   ├── EventEntityApiGenerator.cs
+│   │       │   │   ├── EventListenerComponentGenerator.cs
+│   │       │   │   ├── EventListenertInterfaceGenerator.cs
+│   │       │   │   ├── EventSystemGenerator.cs
+│   │       │   │   └── EventSystemsGenerator.cs
+│   │       │   ├── AbstractGenerator.cs
+│   │       │   ├── CodeGeneratorExtentions.cs
 │   │       │   ├── ContextAttributeGenerator.cs
 │   │       │   ├── ContextGenerator.cs
 │   │       │   ├── ContextMatcherGenerator.cs
@@ -135,6 +143,7 @@
 │   │       │   ├── TemplateConfigExtension.cs
 │   │       │   └── TemplatesConfig.cs
 │   │       ├── Data
+│   │       │   ├── EventData.cs
 │   │       │   ├── MemberData.cs
 │   │       │   └── MethodData.cs
 │   │       ├── DataProviders
@@ -142,6 +151,7 @@
 │   │       │   │   ├── Providers
 │   │       │   │   │   ├── ComponentTypeComponentDataProvider.cs
 │   │       │   │   │   ├── ContextsComponentDataProvider.cs
+│   │       │   │   │   ├── EventComponentDataProvider.cs
 │   │       │   │   │   ├── IComponentDataProvider.cs
 │   │       │   │   │   ├── IsUniqueComponentDataProvider.cs
 │   │       │   │   │   ├── MemberDataComponentDataProvider.cs
@@ -157,11 +167,6 @@
 │   │       │   └── EntityIndex
 │   │       │       ├── EntityIndexData.cs
 │   │       │       └── EntityIndexDataProvider.cs
-│   │       ├── Templates
-│   │       │   ├── ComponentContext.txt
-│   │       │   ├── FlagComponentContext.txt
-│   │       │   ├── MethodArgument.txt
-│   │       │   └── MethodParameter.txt
 │   │       ├── EntitasHook.cs
 │   │       └── PluginUtil.cs
 │   ├── Entitas.Migration
@@ -182,7 +187,8 @@
 │   │           ├── M0410_1.cs
 │   │           ├── M0410_2.cs
 │   │           ├── M0410_3.cs
-│   │           └── M0450.cs
+│   │           ├── M0450.cs
+│   │           └── M0472.cs
 │   ├── Entitas.Migration.CLI
 │   │   └── Program.cs
 │   ├── Entitas.Migration.Unity.Editor
@@ -313,6 +319,8 @@
 │       │   ├── CollectionExtension.cs
 │       │   ├── ComponentStringExtension.cs
 │       │   ├── ContextStringExtension.cs
+│       │   ├── EntityStringExtension.cs
+│       │   ├── MatcherStringExtension.cs
 │       │   ├── PublicMemberInfoEntityExtension.cs
 │       │   └── SystemStringExtension.cs
 │       ├── Group
@@ -349,7 +357,7 @@
 │       ├── EntitasException.cs
 │       ├── EntitasResources.cs
 │       ├── IComponent.cs
-│       └── version
+│       └── version.txt
 ├── Scripts
 │   ├── docs_resources
 │   │   ├── docs-logo.png
@@ -357,42 +365,15 @@
 │   │   ├── html.doxyfile
 │   │   ├── icon.png
 │   │   └── icon@2x.png
-│   ├── build
-│   ├── consts
-│   ├── pack
-│   ├── pull
+│   ├── bee
+│   ├── private.sh
 │   ├── rsync_exclude.txt
-│   ├── rsync_include.txt
-│   ├── test
-│   └── update
-├── Snippets
-│   ├── VisualStudio
-│   │   ├── e_cleanup.snippet
-│   │   ├── e_component.snippet
-│   │   ├── e_execute.snippet
-│   │   ├── e_filter.snippet
-│   │   ├── e_initialize.snippet
-│   │   ├── e_rexecute.snippet
-│   │   ├── e_system.snippet
-│   │   ├── e_teardown.snippet
-│   │   └── e_trigger.snippet
-│   └── Xamarin
-│       ├── e_cleanup.template.xml
-│       ├── e_component.template.xml
-│       ├── e_execute.template.xml
-│       ├── e_filter.template.xml
-│       ├── e_initialize.template.xml
-│       ├── e_rexecute.template.xml
-│       ├── e_rsystem.template.xml
-│       ├── e_system.template.xml
-│       ├── e_teardown.template.xml
-│       └── e_trigger.template.xml
+│   └── rsync_include.txt
 ├── CONTRIBUTING.md
 ├── EntitasUpgradeGuide.md
 ├── ISSUE_TEMPLATE.md
 ├── LICENSE.txt
 ├── README.md
 ├── RELEASE_NOTES.md
-├── icon.png
-├── policy.mdpolicy
-└── tree.txt
+├── changes.md
+└── icon.png

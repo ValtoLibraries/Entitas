@@ -29,16 +29,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DesperateDevs.CodeGeneration, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libraries\DesperateDevs.CodeGeneration.dll</HintPath>
+      <HintPath>..\..\Libraries\Dependencies\DesperateDevs.CodeGeneration.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.CodeGeneration.CodeGenerator, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libraries\DesperateDevs.CodeGeneration.CodeGenerator.dll</HintPath>
+      <HintPath>..\..\Libraries\Dependencies\DesperateDevs.CodeGeneration.CodeGenerator.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.Serialization, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libraries\DesperateDevs.Serialization.dll</HintPath>
+      <HintPath>..\..\Libraries\Dependencies\DesperateDevs.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libraries\DesperateDevs.Utils.dll</HintPath>
+      <HintPath>..\..\Libraries\Dependencies\DesperateDevs.Utils.dll</HintPath>
     </Reference>
     <Reference Include="NSpec, Version=1.0.7.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Libraries\NSpec.dll</HintPath>
@@ -54,6 +54,8 @@
   <ItemGroup>
     <Compile Include="Fixtures\TestProperties.cs" />
     <Compile Include="Tests\Entitas.Migration\describe_M0450.cs" />
+    <Compile Include="Tests\Entitas\Extensions\describe_EntityStringExtension.cs" />
+    <Compile Include="Tests\Entitas\Extensions\describe_MatcherStringExtension.cs" />
     <Compile Include="Tests\Entitas\Extensions\describe_PublicMemberInfoEntityExtension.cs" />
     <Compile Include="Tests\TestExtensions.cs" />
     <Compile Include="Tests\check_namespaces.cs" />
@@ -121,9 +123,9 @@
     <Folder Include="Tests\Entitas\Extensions\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Tests.Fixtures\Tests.Fixtures.csproj">
+    <ProjectReference Include="..\TestFixtures\TestFixtures.csproj">
       <Project>{6F01CC45-F951-43A5-923E-D3778F9DD435}</Project>
-      <Name>Tests.Fixtures</Name>
+      <Name>TestFixtures</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Addons\Entitas.Blueprints.Unity\Entitas.Blueprints.Unity.csproj">
       <Project>{026FFA2B-1F8D-4E05-A54D-67AB5B611985}</Project>

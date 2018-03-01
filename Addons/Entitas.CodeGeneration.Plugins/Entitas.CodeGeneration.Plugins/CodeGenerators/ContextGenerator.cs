@@ -10,10 +10,10 @@ namespace Entitas.CodeGeneration.Plugins {
         public int priority { get { return 0; } }
         public bool runInDryMode { get { return true; } }
 
-        const string CONTEXT_TEMPLATE =
-@"public sealed partial class ${ContextName}Context : Entitas.Context<${ContextName}Entity> {
+        const string TEMPLATE =
+            @"public sealed partial class ${ContextType} : Entitas.Context<${EntityType}> {
 
-    public ${ContextName}Context()
+    public ${ContextType}()
         : base(
             ${Lookup}.TotalComponents,
             0,
@@ -38,17 +38,16 @@ namespace Entitas.CodeGeneration.Plugins {
         public CodeGenFile[] Generate(CodeGeneratorData[] data) {
             return data
                 .OfType<ContextData>()
-                .Select(generateContextClass)
+                .Select(generate)
                 .ToArray();
         }
 
-        CodeGenFile generateContextClass(ContextData data) {
+        CodeGenFile generate(ContextData data) {
             var contextName = data.GetContextName();
             return new CodeGenFile(
-                contextName + Path.DirectorySeparatorChar + contextName + "Context.cs",
-                CONTEXT_TEMPLATE
-                    .Replace("${ContextName}", contextName)
-                    .Replace("${Lookup}", contextName + ComponentsLookupGenerator.COMPONENTS_LOOKUP),
+                contextName + Path.DirectorySeparatorChar +
+                contextName.AddContextSuffix() + ".cs",
+                TEMPLATE.Replace(contextName),
                 GetType().FullName
             );
         }

@@ -1,11 +1,11 @@
 ﻿using Entitas;
 using NSpec;
 
-class describe_ : nspec {
+class describe_SystemStringExtension : nspec {
 
     const string SYSTEM_SUFFIX = "System";
 
-    void when_entity() {
+    void when_system() {
 
         context["when adding SystemSuffix"] = () => {
 
